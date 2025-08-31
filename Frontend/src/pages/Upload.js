@@ -1,42 +1,60 @@
 import React, { useState } from "react";
+import { simplifyDoc, queryDoc, detectSuspicious } from "../services/api";
 
-function Upload() {
-  const [file, setFile] = useState(null);
+export default function Upload() {
+  const [text, setText] = useState("");
+  const [question, setQuestion] = useState("");
+  const [result, setResult] = useState("");
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+  const handleSimplify = async () => {
+    const res = await simplifyDoc(text);
+    setResult(res.simplified);
   };
 
-  const handleUpload = () => {
-    if (file) {
-      alert(`Uploaded: ${file.name} (placeholder - backend not connected yet)`);
-    } else {
-      alert("Please select a file first");
-    }
+  const handleQuery = async () => {
+    const res = await queryDoc(text, question);
+    setResult(res.answer);
+  };
+
+  const handleDetect = async () => {
+    const res = await detectSuspicious(text);
+    setResult(res.suspicious);
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Upload Document</h2>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload} style={styles.button}>Upload</button>
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-2">Upload / Paste Document</h2>
+      <textarea
+        className="border p-2 w-full"
+        rows={10}
+        placeholder="Paste your document text here..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+
+      <div className="mt-3 flex gap-3">
+        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSimplify}>
+          Simplify
+        </button>
+        <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={handleQuery}>
+          Ask Question
+        </button>
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleDetect}>
+          Detect Clauses
+        </button>
+      </div>
+
+      <input
+        className="border p-2 mt-3 w-full"
+        placeholder="Enter question (for Q&A)"
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+      />
+
+      <div className="mt-4 border p-4 bg-gray-50 rounded">
+        <h3 className="font-semibold">AI Result:</h3>
+        <pre>{result}</pre>
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    padding: "20px",
-  },
-  button: {
-    marginTop: "10px",
-    padding: "10px 15px",
-    background: "#1e293b",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-  },
-};
-
-export default Upload;

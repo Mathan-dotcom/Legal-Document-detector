@@ -1,28 +1,21 @@
 import express from "express";
-import cors from "cors";
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import docRoutes from "./routes/docRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";   // ✅ Add this
 
 const app = express();
-const PORT = 5000;
 
-app.use(cors());
+// Middleware
 app.use(express.json());
 
-// ✅ Root route for testing
-app.get("/", (req, res) => {
-  res.send("Legal Docs Backend API is running 🚀");
-});
+// DB connect
+connectDB();
 
-// Example placeholder login route
-app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body;
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/docs", docRoutes);
+app.use("/api/ai", aiRoutes);  // ✅ Register AI routes
 
-  if (email === "test@example.com" && password === "123456") {
-    return res.json({ success: true, message: "Login successful" });
-  }
-
-  res.status(401).json({ success: false, message: "Invalid credentials" });
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
