@@ -1,5 +1,5 @@
 // database/Queries/documentQueries.js
-const Document = require("C:\Users\steph\Desktop\Git\Legal-Document-detector\Backend\models\Document.js");
+const Document = require("../models/Document");
 
 // Upload a document
 async function uploadDocument(userId, title, filePath) {
