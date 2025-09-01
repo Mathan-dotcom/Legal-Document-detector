@@ -26,3 +26,38 @@ exports.getScore = async (req, res) => {
     res.status(500).json({ message: "Error retrieving score" });
   }
 };
+
+const Document = require("../models/Document");
+
+const Document = require("../models/Document");
+const { calculateScore } = require("../utils/scoreHelper");
+
+exports.uploadDocument = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Calculate score
+    const score = calculateScore(req.file);
+
+    const newDoc = new Document({
+      user: req.user.id,
+      filePath: req.file.path,
+      fileName: req.file.originalname,
+      score, // store score
+    });
+
+    await newDoc.save();
+
+    res.status(201).json({
+      message: "File uploaded successfully",
+      score,
+      doc: newDoc,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

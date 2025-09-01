@@ -1,28 +1,71 @@
 import express from "express";
-import cors from "cors";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+dotenv.config();
 
 const app = express();
-const PORT = 5000;
+app.use(express.json()); // parse JSON
 
-app.use(cors());
-app.use(express.json());
+// ✅ Connect MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.log(err));
 
-// ✅ Root route for testing
-app.get("/", (req, res) => {
-  res.send("Legal Docs Backend API is running 🚀");
+// ✅ User model
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true }
 });
 
-// Example placeholder login route
-app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body;
+const User = mongoose.model("User", userSchema);
 
-  if (email === "test@example.com" && password === "123456") {
-    return res.json({ success: true, message: "Login successful" });
+// ✅ Register route
+app.post("/register", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) return res.status(400).json({ msg: "User already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, password: hashedPassword });
+    await newUser.save();
+
+    res.json({ msg: "User registered successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  res.status(401).json({ success: false, message: "Invalid credentials" });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+// ✅ Login route
+app.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(400).json({ msg: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
+
+// ✅ Test route
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

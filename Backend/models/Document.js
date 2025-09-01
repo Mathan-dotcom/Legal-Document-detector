@@ -1,9 +1,15 @@
+
 const mongoose = require("mongoose");
 
-const DocumentSchema = new mongoose.Schema({
-  content: { type: String, required: true },
-  score: { type: Number, required: true },
-  color: { type: String, required: true }
+const documentSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  filePath: { type: String, required: true },
+  fileName: { type: String, required: true },
+  uploadedAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Document", DocumentSchema);
+module.exports = mongoose.model("Document", documentSchema);
