@@ -1,5 +1,5 @@
 // database/Queries/userQueries.js
-const User = require("C:\Users\steph\Desktop\Git\Legal-Document-detector\Backend\models\User.js");
+const User = require("../models/User");
 
 // Create new user
 async function createUser(username, password) {
