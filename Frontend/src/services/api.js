@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:5000/api";
+import axios from "axios";
+const API = axios.create({ baseURL: "http://localhost:5000/api" });
+
 
 export const simplifyDoc = async (text) => {
   const res = await fetch(`${API_URL}/ai/simplify`, {

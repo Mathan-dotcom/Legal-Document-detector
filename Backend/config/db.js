@@ -1,7 +1,16 @@
-// Fake in-memory DB (no MongoDB required)
-let fakeDB = {
-  users: [{ id: 1, email: "test@example.com", password: "123456" }],
-  documents: []
+import mongoose from "mongoose";
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ MongoDB connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  }
 };
 
-module.exports = fakeDB;
+export default connectDB;

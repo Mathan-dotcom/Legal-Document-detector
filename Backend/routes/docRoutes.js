@@ -1,17 +1,15 @@
-const express = require("express");
-const { uploadDoc, getScore } = require("../controllers/docController");
+import express from "express";
+
 const router = express.Router();
 
-router.post("/upload", uploadDoc);
-router.get("/score/:docId", getScore);
+// Example: Upload document (dummy route for now)
+router.post("/upload", (req, res) => {
+  res.json({ msg: "Document uploaded successfully" });
+});
 
-module.exports = router;
-const express = require("express");
-const { uploadDocument } = require("../controllers/docController");
-const upload = require("../middleware/uploadMiddleware");
-const authMiddleware = require("../middleware/authMiddleware");
+// Example: Get documents
+router.get("/", (req, res) => {
+  res.json({ docs: ["Doc1", "Doc2", "Doc3"] });
+});
 
-// POST /api/docs/upload
-router.post("/upload", authMiddleware, upload.single("document"), uploadDocument);
-
-module.exports = router;
+export default router;
