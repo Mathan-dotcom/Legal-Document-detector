@@ -15,7 +15,7 @@ function Signup() {
     <div className="auth-page">
       {/* Video background */}
       <video autoPlay loop muted className="video-bg">
-        <source src="/public/background.mp4" type="video/mp4" />
+        <source src="/background.mp4" type="video/mp4" />
       </video>
 
       <div className="auth-box">
@@ -35,3 +35,5 @@ function Signup() {
 }
 
 export default Signup;
+
+
