@@ -1,27 +1,42 @@
 import express from "express";
-import mongoose from "mongoose";
 import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+
+import authRoutes from "./routes/authRoutes.js";
+import docRoutes from "./routes/docRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
+
+dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+  })
+);
 app.use(express.json());
 
-// MongoDB connection
-mongoose.connect("mongodb://127.0.0.1:27017/legal-docs", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB connected"))
-.catch(err => console.error("❌ MongoDB connection error:", err));
+// Connect DB first, then start server
+connectDB()
+  .then(() => {
+    console.log("✅ DB connected");
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Server is running!");
-});
+    // Health
+    app.get("/health", (req, res) => res.json({ ok: true }));
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-});
+    // Mount routes
+    app.use("/api/auth", authRoutes);
+    app.use("/api/docs", docRoutes);
+    app.use("/api/ai", aiRoutes);
+
+    app.listen(PORT, () =>
+      console.log(`🚀 Backend running on http://localhost:${PORT}`)
+    );
+  })
+  .catch((err) => {
+    console.error("❌ Failed to connect DB", err);
+    process.exit(1);
+  });
