@@ -1,53 +1,36 @@
-import React, { useState } from "react";
-import { login } from "../services/api";
-import { useNavigate } from "react-router-dom";  // ✅ import navigation
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../index.css";
 
-const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();  // ✅ create navigation hook
+function Login() {
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const res = await login({ username, password });
-      localStorage.setItem("token", res.token);   // save token
-      setMessage("✅ Login successful!");
-
-      // ✅ redirect to dashboard after login
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
-    } catch (err) {
-      setMessage("❌ Invalid credentials");
-      console.error(err);
-    }
+    // TODO: API call for login
+    navigate("/dashboard");
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "100px" }}>
-      <form onSubmit={handleSubmit} style={{ width: "400px", padding: "20px", border: "1px solid #ccc", borderRadius: "8px", background: "#f9f9f9" }}>
-        <h2 style={{ textAlign: "center" }}>Login</h2>
+    <div className="auth-page">
+      {/* Video background */}
+      <video autoPlay loop muted className="video-bg">
+        <source src="/public/background.mp4" type="video/mp4" />
+      </video>
 
-        <div style={{ marginBottom: "10px" }}>
-          <label>Username</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required style={{ width: "100%", padding: "8px", marginTop: "5px" }} />
-        </div>
-
-        <div style={{ marginBottom: "10px" }}>
-          <label>Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: "100%", padding: "8px", marginTop: "5px" }} />
-        </div>
-
-        <button type="submit" style={{ width: "100%", padding: "10px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>
-          Login
-        </button>
-
-        {message && <p style={{ marginTop: "15px", textAlign: "center" }}>{message}</p>}
-      </form>
+      <div className="auth-box">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input type="email" placeholder="Email" required />
+          <input type="password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+        <p>
+          Don’t have an account? <Link to="/signup">Sign Up</Link>
+        </p>
+      </div>
     </div>
   );
-};
+}
 
 export default Login;

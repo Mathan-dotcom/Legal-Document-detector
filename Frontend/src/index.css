@@ -1,16 +1,125 @@
-/* Reset some styles */
-* {
+/* Remove default cursor */
+body {
+  cursor: none;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  background: #000;
+  color: white;
 }
 
-body {
-  font-family: "Inter", sans-serif;
-  background-color: #f8fafc;
-  color: #1e293b;
+/* Neon cursor */
+.custom-cursor {
+  position: fixed;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #00f5ff;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  box-shadow: 0 0 15px #00f5ff, 0 0 35px #00f5ff, 0 0 55px #00f5ff;
+  transition: transform 0.1s ease-out;
 }
 
-.container {
-  padding: 20px;
+/* Grow cursor on click */
+.custom-cursor.click {
+  transform: translate(-50%, -50%) scale(1.5);
+  transition: transform 0.2s ease;
+}
+
+/* Spinner loader */
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid #00f5ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+}
+
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Video background */
+.video-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Auth page wrapper */
+.auth-page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Auth box (form card) */
+.auth-box {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 350px;
+  color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+.auth-box h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #4facfe;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.auth-box button:hover {
+  background: #00c6ff;
+}
+
+.auth-box p {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.auth-box a {
+  color: #4facfe;
+  text-decoration: none;
+}
+
+.auth-box a:hover {
+  text-decoration: underline;
 }

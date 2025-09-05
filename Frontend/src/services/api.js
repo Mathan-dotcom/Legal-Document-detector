@@ -1,50 +1,45 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE || "http://localhost:5000/api",
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000/api",
 });
 
-// Attach token automatically
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+// ========== AUTH ==========
+export const register = (data) => API.post("/auth/register", data);
+export const login = (data) => API.post("/auth/login", data);
 
-// AUTH
-export async function login({ username, password }) {
-  const { data } = await API.post("/auth/login", { username, password });
-  if (data?.token) localStorage.setItem("token", data.token);
-  return data;
-}
-
-// DOCS
-export async function uploadDocument(file) {
-  const form = new FormData();
-  form.append("file", file);
-  const { data } = await API.post("/docs/upload", form, {
-    headers: { "Content-Type": "multipart/form-data" },
+// ========== DOCUMENTS ==========
+export const uploadDocument = (formData, token) =>
+  API.post("/docs/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
   });
-  return data;
-}
 
-export async function listDocuments() {
-  const { data } = await API.get("/docs");
-  return data;
-}
+export const simplifyDoc = (docId, token) =>
+  API.post(
+    `/ai/simplify/${docId}`,
+    {},
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
-// AI
-export async function simplifyDoc(text) {
-  const { data } = await API.post("/ai/simplify", { text });
-  return data;
-}
+export const queryDoc = (docId, query, token) =>
+  API.post(
+    `/ai/query/${docId}`,
+    { query },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
-export async function queryDoc(text, query) {
-  const { data } = await API.post("/ai/query", { text, query });
-  return data;
-}
-
-export async function detectSuspicious(text) {
-  const { data } = await API.post("/ai/detect", { text });
-  return data;
-}
+export const detectSuspicious = (docId, token) =>
+  API.post(
+    `/ai/detect/${docId}`,
+    {},
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
